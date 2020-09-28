@@ -15,18 +15,54 @@ namespace WebAddressbookTests
         {
         }
 
-        public ContactHelper InitNewContactCreation()
+        public ContactHelper Create(ContactData contact)
+        {
+            InitContactCreation();
+            FillContactForm(contact);
+            SubmitContactCreation();
+            manager.Navigator.GoToHomePage();
+            return this;
+        }
+
+        public ContactHelper Modify(int index, ContactData newGData)
+        {
+            InitContactModification(index);
+            FillContactForm(newGData);
+            SubmitContactModification();
+            manager.Navigator.GoToHomePage();
+            return this;
+        }
+
+        public ContactHelper Remove(int index)
+        {
+            SelectContact(index);
+            RemoveContact();
+            driver.SwitchTo().Alert().Accept();
+            manager.Navigator.GoToHomePage();
+            return this;
+        }
+
+        public ContactHelper InitContactCreation()
         {
             driver.FindElement(By.LinkText("add new")).Click();
             return this;
         }
 
-        public ContactHelper Create(ContactData contact)
+        public ContactHelper SubmitContactCreation()
         {
-            InitNewContactCreation();
-            FillContactForm(contact);
-            SubmitContactCreation();
-            manager.Navigator.GoToHomePage();
+            driver.FindElement(By.Name("submit")).Click();
+            return this;
+        }
+
+        public ContactHelper InitContactModification(int index)
+        {
+            driver.FindElement(By.XPath("(//img[@alt='Edit'])[" + index + "]")).Click();
+            return this;
+        }
+
+        public ContactHelper SubmitContactModification()
+        {
+            driver.FindElement(By.Name("update")).Click();
             return this;
         }
 
@@ -41,9 +77,15 @@ namespace WebAddressbookTests
             return this;
         }
 
-        public ContactHelper SubmitContactCreation()
+        public ContactHelper SelectContact(int index)
         {
-            driver.FindElement(By.XPath("(//input[@name='submit'])[2]")).Click();
+            driver.FindElement(By.XPath("(//table[@id='maintable']/tbody/tr[" + (index + 1) + "]/td/input)")).Click();
+            return this;
+        }
+
+        public ContactHelper RemoveContact()
+        {
+            driver.FindElement(By.XPath("(//input[@value='Delete'])")).Click();
             return this;
         }
     }
